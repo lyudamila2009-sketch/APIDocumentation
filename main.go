@@ -1,3 +1,8 @@
+// @title           Task Management API
+// @version         1.0
+// @description     REST API для управления пользователями и задачами
+// @host            localhost:8080
+// @BasePath        /
 package main
 
 import (

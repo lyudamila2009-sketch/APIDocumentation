@@ -26,6 +26,13 @@ func NewUserHandler() *UserHandler {
 	}
 }
 
+// ListUsers godoc
+// @Summary      Список пользователей
+// @Description  Возвращает всех пользователей
+// @Tags         users
+// @Produce      json
+// @Success      200  {object}  models.SuccessResponse{data=[]models.User}
+// @Router       /api/v1/users [get]
 func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -43,6 +50,16 @@ func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// GetUser godoc
+// @Summary      Получить пользователя
+// @Description  Возвращает пользователя по ID
+// @Tags         users
+// @Produce      json
+// @Param        id   path      int  true  "ID пользователя"
+// @Success      200  {object}  models.SuccessResponse{data=models.User}
+// @Failure      400  {string}  string  "Неверный ID"
+// @Failure      404  {string}  string  "Пользователь не найден"
+// @Router       /api/v1/users/{id} [get]
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
@@ -68,6 +85,16 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// CreateUser godoc
+// @Summary      Создать пользователя
+// @Description  Создаёт нового пользователя
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        body  body      models.CreateUserRequest  true  "Данные пользователя"
+// @Success      201   {object}  models.SuccessResponse{data=models.User}
+// @Failure      400   {string}  string  "Невалидный запрос"
+// @Router       /api/v1/users [post]
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req models.CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -96,6 +123,18 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// UpdateUser godoc
+// @Summary      Обновить пользователя
+// @Description  Частично обновляет данные пользователя по ID
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id    path      int                       true  "ID пользователя"
+// @Param        body  body      models.UpdateUserRequest  true  "Обновляемые поля"
+// @Success      200   {object}  models.SuccessResponse{data=models.User}
+// @Failure      400   {string}  string  "Неверный ID или невалидный запрос"
+// @Failure      404   {string}  string  "Пользователь не найден"
+// @Router       /api/v1/users/{id} [put]
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
@@ -136,6 +175,15 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// DeleteUser godoc
+// @Summary      Удалить пользователя
+// @Description  Удаляет пользователя по ID
+// @Tags         users
+// @Param        id  path      int  true  "ID пользователя"
+// @Success      204
+// @Failure      400  {string}  string  "Неверный ID"
+// @Failure      404  {string}  string  "Пользователь не найден"
+// @Router       /api/v1/users/{id} [delete]
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
