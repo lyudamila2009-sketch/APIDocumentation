@@ -121,8 +121,8 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdateTodo godoc
-// @Summary      Обновить задачу
-// @Description  Частично обновляет задачу по ID
+// @Summary      Частично обновить задачу
+// @Description  Частично обновляет задачу по ID. Поля с null остаются без изменений.
 // @Tags         todos
 // @Accept       json
 // @Produce      json
@@ -131,7 +131,7 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 // @Success      200   {object}  models.SuccessResponse{data=models.Todo}
 // @Failure      400   {object}  models.ErrorResponse
 // @Failure      404   {object}  models.ErrorResponse
-// @Router       /api/v1/todos/{id} [put]
+// @Router       /api/v1/todos/{id} [patch]
 func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := parseID(idStr)

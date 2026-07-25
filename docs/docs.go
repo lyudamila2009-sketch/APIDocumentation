@@ -152,8 +152,41 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "description": "Частично обновляет задачу по ID",
+            "delete": {
+                "description": "Удаляет задачу по ID",
+                "tags": [
+                    "todos"
+                ],
+                "summary": "Удалить задачу",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID задачи",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Частично обновляет задачу по ID. Поля с null остаются без изменений.",
                 "consumes": [
                     "application/json"
                 ],
@@ -163,7 +196,7 @@ const docTemplate = `{
                 "tags": [
                     "todos"
                 ],
-                "summary": "Обновить задачу",
+                "summary": "Частично обновить задачу",
                 "parameters": [
                     {
                         "type": "integer",
@@ -200,39 +233,6 @@ const docTemplate = `{
                                 }
                             ]
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Удаляет задачу по ID",
-                "tags": [
-                    "todos"
-                ],
-                "summary": "Удалить задачу",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID задачи",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -386,8 +386,41 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "description": "Частично обновляет данные пользователя по ID",
+            "delete": {
+                "description": "Удаляет пользователя по ID",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Удалить пользователя",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Частично обновляет данные пользователя по ID. Поля с null остаются без изменений.",
                 "consumes": [
                     "application/json"
                 ],
@@ -397,7 +430,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Обновить пользователя",
+                "summary": "Частично обновить пользователя",
                 "parameters": [
                     {
                         "type": "integer",
@@ -434,39 +467,6 @@ const docTemplate = `{
                                 }
                             ]
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Удаляет пользователя по ID",
-                "tags": [
-                    "users"
-                ],
-                "summary": "Удалить пользователя",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID пользователя",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",

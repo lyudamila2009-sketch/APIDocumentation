@@ -130,8 +130,8 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdateUser godoc
-// @Summary      Обновить пользователя
-// @Description  Частично обновляет данные пользователя по ID
+// @Summary      Частично обновить пользователя
+// @Description  Частично обновляет данные пользователя по ID. Поля с null остаются без изменений.
 // @Tags         users
 // @Accept       json
 // @Produce      json
@@ -140,7 +140,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Success      200   {object}  models.SuccessResponse{data=models.User}
 // @Failure      400   {object}  models.ErrorResponse
 // @Failure      404   {object}  models.ErrorResponse
-// @Router       /api/v1/users/{id} [put]
+// @Router       /api/v1/users/{id} [patch]
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)

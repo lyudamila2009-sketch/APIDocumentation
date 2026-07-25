@@ -198,10 +198,10 @@ paths:
       summary: Получить задачу
       tags:
       - todos
-    put:
+    patch:
       consumes:
       - application/json
-      description: Частично обновляет задачу по ID
+      description: Частично обновляет задачу по ID. Поля с null остаются без изменений.
       parameters:
       - description: ID задачи
         in: path
@@ -234,7 +234,7 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      summary: Обновить задачу
+      summary: Частично обновить задачу
       tags:
       - todos
   /api/v1/users:
@@ -341,10 +341,11 @@ paths:
       summary: Получить пользователя
       tags:
       - users
-    put:
+    patch:
       consumes:
       - application/json
-      description: Частично обновляет данные пользователя по ID
+      description: Частично обновляет данные пользователя по ID. Поля с null остаются
+        без изменений.
       parameters:
       - description: ID пользователя
         in: path
@@ -377,7 +378,7 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      summary: Обновить пользователя
+      summary: Частично обновить пользователя
       tags:
       - users
 swagger: "2.0"
