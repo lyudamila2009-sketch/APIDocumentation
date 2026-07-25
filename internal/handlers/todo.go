@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"api-doc-example/internal/models"
+	"api-doc-example/internal/validation"
 )
 
 type TodoHandler struct {
@@ -29,7 +31,7 @@ func NewTodoHandler() *TodoHandler {
 // @Success      200  {object}  models.SuccessResponse{data=[]models.Todo}
 // @Router       /api/v1/todos [get]
 func (h *TodoHandler) ListTodos(w http.ResponseWriter, r *http.Request) {
-	var todos []models.Todo
+	todos := make([]models.Todo, 0, len(h.todos))
 	for _, todo := range h.todos {
 		todos = append(todos, todo)
 	}
@@ -91,6 +93,11 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := validation.Validate(req); err != nil {
+		writeError(w, http.StatusBadRequest, "Невалидный запрос")
+		return
+	}
+
 	todo := models.Todo{
 		ID:          h.nextID,
 		UserID:      req.UserID,
@@ -135,6 +142,11 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 
 	var req models.UpdateTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "Невалидный запрос")
+		return
+	}
+
+	if err := validation.Validate(req); err != nil {
 		writeError(w, http.StatusBadRequest, "Невалидный запрос")
 		return
 	}

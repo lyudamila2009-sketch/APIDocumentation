@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 
 	"api-doc-example/internal/models"
+	"api-doc-example/internal/validation"
 )
 
 type UserHandler struct {
@@ -36,7 +38,7 @@ func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
 
-	var users []models.User
+	users := make([]models.User, 0, len(h.users))
 	for _, user := range h.users {
 		users = append(users, user)
 	}
@@ -101,6 +103,11 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := validation.Validate(req); err != nil {
+		writeError(w, http.StatusBadRequest, "Невалидный запрос")
+		return
+	}
+
 	h.mu.Lock()
 	user := models.User{
 		ID:        h.nextID,
@@ -144,6 +151,11 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	var req models.UpdateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "Невалидный запрос")
+		return
+	}
+
+	if err := validation.Validate(req); err != nil {
 		writeError(w, http.StatusBadRequest, "Невалидный запрос")
 		return
 	}

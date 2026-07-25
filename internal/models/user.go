@@ -34,8 +34,3 @@ type SuccessResponse struct {
 	Success bool        `json:"success"`
 	Data    interface{} `json:"data,omitempty"`
 }
-
-// Error возвращает заголовок ошибки для совместимости с error интерфейсом.
-func (e *ErrorResponse) Error() string {
-	return e.Error
-}
