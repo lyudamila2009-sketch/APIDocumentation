@@ -13,7 +13,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 func main() {
@@ -24,7 +23,13 @@ func main() {
 
 	swaggerDir := "docs"
 
-	r.Mount("/swagger", httpSwagger.Handler())
+	r.Get("/swagger", http.RedirectHandler("/swagger/", http.StatusMovedPermanently).ServeHTTP)
+	r.Get("/swagger/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "docs/swagger.html")
+	})
+	r.Get("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "docs/doc.json")
+	})
 
 	usersRouter := chi.NewRouter()
 	userHandler := handlers.NewUserHandler()
