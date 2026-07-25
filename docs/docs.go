@@ -50,7 +50,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Создаёт новую задачу",
+                "description": "Создаёт новую задачу для существующего пользователя",
                 "consumes": [
                     "application/json"
                 ],
@@ -93,6 +93,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.ErrorResponse"
                         }
@@ -583,6 +589,9 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "maxLength": 200
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },

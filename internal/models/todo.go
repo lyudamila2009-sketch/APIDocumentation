@@ -27,4 +27,5 @@ type UpdateTodoRequest struct {
 	Title       *string `json:"title" validate:"omitempty,max=200"`
 	Description *string `json:"description" validate:"omitempty,max=1000"`
 	Done        *bool   `json:"done"`
+	UserID      *int    `json:"user_id"`
 }

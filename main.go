@@ -33,6 +33,7 @@ func main() {
 
 	todosRouter := chi.NewRouter()
 	todoHandler := handlers.NewTodoHandler()
+	todoHandler.SetUserHandler(userHandler)
 	todosRouter.Get("/", todoHandler.ListTodos)
 	todosRouter.Get("/{id}", todoHandler.GetTodo)
 	todosRouter.Post("/", todoHandler.CreateTodo)

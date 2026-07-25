@@ -13,16 +13,22 @@ import (
 )
 
 type TodoHandler struct {
-	mu     sync.RWMutex
-	todos  map[int]models.Todo
-	nextID int
+	mu        sync.RWMutex
+	todos     map[int]models.Todo
+	nextID    int
+	userHandler *UserHandler
 }
 
 func NewTodoHandler() *TodoHandler {
 	return &TodoHandler{
-		todos:  make(map[int]models.Todo),
-		nextID: 1,
+		todos:       make(map[int]models.Todo),
+		nextID:      1,
+		userHandler: nil,
 	}
+}
+
+func (h *TodoHandler) SetUserHandler(userHandler *UserHandler) {
+	h.userHandler = userHandler
 }
 
 // ListTodos godoc
@@ -85,13 +91,14 @@ func (h *TodoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 
 // CreateTodo godoc
 // @Summary      Создать задачу
-// @Description  Создаёт новую задачу
+// @Description  Создаёт новую задачу для существующего пользователя
 // @Tags         todos
 // @Accept       json
 // @Produce      json
 // @Param        body  body      models.CreateTodoRequest  true  "Данные задачи"
 // @Success      201   {object}  models.SuccessResponse{data=models.Todo}
 // @Failure      400   {object}  models.ErrorResponse
+// @Failure      404   {object}  models.ErrorResponse
 // @Router       /api/v1/todos [post]
 func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	var req models.CreateTodoRequest
@@ -103,6 +110,13 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	if err := validation.Validate(req); err != nil {
 		writeError(w, http.StatusBadRequest, "Невалидный запрос")
 		return
+	}
+
+	if h.userHandler != nil {
+		if !h.userHandler.UserExists(req.UserID) {
+			writeError(w, http.StatusNotFound, "Пользователь не найден")
+			return
+		}
 	}
 
 	h.mu.Lock()
@@ -168,6 +182,14 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if req.UserID != nil && h.userHandler != nil {
+		if !h.userHandler.UserExists(*req.UserID) {
+			h.mu.Unlock()
+			writeError(w, http.StatusNotFound, "Пользователь не найден")
+			return
+		}
+	}
+
 	if req.Title != nil {
 		todo.Title = *req.Title
 	}
@@ -176,6 +198,9 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.Done != nil {
 		todo.Done = *req.Done
+	}
+	if req.UserID != nil {
+		todo.UserID = *req.UserID
 	}
 	todo.UpdatedAt = time.Now()
 

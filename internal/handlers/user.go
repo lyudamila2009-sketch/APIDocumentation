@@ -215,3 +215,11 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+// UserExists проверяет, существует ли пользователь с заданным ID
+func (h *UserHandler) UserExists(id int) bool {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	_, exists := h.users[id]
+	return exists
+}

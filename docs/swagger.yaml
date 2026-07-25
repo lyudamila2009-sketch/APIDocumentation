@@ -67,6 +67,8 @@ definitions:
       title:
         maxLength: 200
         type: string
+      user_id:
+        type: integer
     type: object
   models.UpdateUserRequest:
     properties:
@@ -117,7 +119,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Создаёт новую задачу
+      description: Создаёт новую задачу для существующего пользователя
       parameters:
       - description: Данные задачи
         in: body
@@ -139,6 +141,10 @@ paths:
               type: object
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Создать задачу
