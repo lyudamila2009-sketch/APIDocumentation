@@ -35,7 +35,7 @@ http://localhost:8080/docs/swagger.json
 | GET | `/api/v1/users` | Список всех пользователей |
 | GET | `/api/v1/users/{id}` | Получить пользователя по ID |
 | POST | `/api/v1/users` | Создать нового пользователя |
-| PUT | `/api/v1/users/{id}` | Обновить пользователя |
+| PATCH | `/api/v1/users/{id}` | Частично обновить пользователя |
 | DELETE | `/api/v1/users/{id}` | Удалить пользователя |
 
 ### Задачи (todos)
@@ -45,7 +45,7 @@ http://localhost:8080/docs/swagger.json
 | GET | `/api/v1/todos` | Список всех задач |
 | GET | `/api/v1/todos/{id}` | Получить задачу по ID |
 | POST | `/api/v1/todos` | Создать новую задачу |
-| PUT | `/api/v1/todos/{id}` | Обновить задачу |
+| PATCH | `/api/v1/todos/{id}` | Частично обновить задачу |
 | DELETE | `/api/v1/todos/{id}` | Удалить задачу |
 
 ## Модели данных
