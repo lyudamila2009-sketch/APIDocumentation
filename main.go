@@ -22,29 +22,31 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
+	swaggerDir := "docs"
+
+	r.Mount("/swagger", httpSwagger.Handler())
+
 	usersRouter := chi.NewRouter()
 	userHandler := handlers.NewUserHandler()
 	usersRouter.Get("/", userHandler.ListUsers)
-	usersRouter.Get("/{id}", userHandler.GetUser)
+	usersRouter.Get("/{id:[0-9]+}", userHandler.GetUser)
 	usersRouter.Post("/", userHandler.CreateUser)
-	usersRouter.Put("/{id}", userHandler.UpdateUser)
-	usersRouter.Delete("/{id}", userHandler.DeleteUser)
+	usersRouter.Put("/{id:[0-9]+}", userHandler.UpdateUser)
+	usersRouter.Delete("/{id:[0-9]+}", userHandler.DeleteUser)
 	r.Mount("/api/v1/users", usersRouter)
 
 	todosRouter := chi.NewRouter()
 	todoHandler := handlers.NewTodoHandler()
 	todoHandler.SetUserHandler(userHandler)
 	todosRouter.Get("/", todoHandler.ListTodos)
-	todosRouter.Get("/{id}", todoHandler.GetTodo)
+	todosRouter.Get("/{id:[0-9]+}", todoHandler.GetTodo)
 	todosRouter.Post("/", todoHandler.CreateTodo)
-	todosRouter.Put("/{id}", todoHandler.UpdateTodo)
-	todosRouter.Delete("/{id}", todoHandler.DeleteTodo)
+	todosRouter.Put("/{id:[0-9]+}", todoHandler.UpdateTodo)
+	todosRouter.Delete("/{id:[0-9]+}", todoHandler.DeleteTodo)
 	r.Mount("/api/v1/todos", todosRouter)
 
-	r.Mount("/swagger", httpSwagger.Handler(httpSwagger.URL("/docs/swagger.json")))
-	r.Get("/docs/swagger.json", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "docs/swagger.json")
-	})
+	filesServer := http.FileServer(http.Dir(swaggerDir))
+	r.Handle("/docs/*", http.StripPrefix("/docs/", filesServer))
 
 	log.Println("Сервер запущен на http://localhost:8080")
 	log.Println("Swagger UI доступен по адресу: http://localhost:8080/swagger/")
