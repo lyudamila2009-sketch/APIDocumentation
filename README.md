@@ -14,18 +14,27 @@ REST API для управления пользователями и задач�
 ```
 api-doc-example/
 ├── docs/                 # Документация API (Swagger)
+│   ├── docs.go          # Сгенерированные Swagger-аннотации
+│   ├── doc.json         # Символическая копия swagger.json для /swagger/doc.json
+│   ├── swagger.html     # HTML страница Swagger UI
 │   ├── swagger.json     # OpenAPI спецификация
+│   ├── swagger.yaml     # OpenAPI спецификация (YAML)
 │   └── README.md        # Документация в docs/
 ├── internal/
 │   ├── handlers/        # Обработчики HTTP запросов
+│   │   ├── common.go    # Общие утилиты (response writer, error handler)
 │   │   ├── user.go      # Handler для управления пользователями
 │   │   └── todo.go      # Handler для управления задачами
-│   └── models/          # Модели данных
-│       ├── user.go      # Модели пользователей
-│       └── todo.go      # Модели задач
+│   ├── models/          # Модели данных
+│   │   ├── user.go      # Модели пользователей
+│   │   └── todo.go      # Модели задач
+│   └── validation/      # Валидация данных
+│       └── validation.go # Валидация с помощью validator.v10
+├── doc.json             # Символическая копия swagger.json для /swagger/doc.json
 ├── main.go              # Точка входа в приложение
 ├── go.mod               # Зависимости Go
 ├── go.sum               # Хэши зависимостей
+├── LICENSE              # Лицензия MIT
 └── README.md            # Документация проекта
 ```
 
