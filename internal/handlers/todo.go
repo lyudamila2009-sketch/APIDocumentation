@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"api-doc-example/internal/models"
@@ -12,6 +13,7 @@ import (
 )
 
 type TodoHandler struct {
+	mu     sync.RWMutex
 	todos  map[int]models.Todo
 	nextID int
 }
@@ -31,6 +33,9 @@ func NewTodoHandler() *TodoHandler {
 // @Success      200  {object}  models.SuccessResponse{data=[]models.Todo}
 // @Router       /api/v1/todos [get]
 func (h *TodoHandler) ListTodos(w http.ResponseWriter, r *http.Request) {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	todos := make([]models.Todo, 0, len(h.todos))
 	for _, todo := range h.todos {
 		todos = append(todos, todo)
@@ -62,7 +67,9 @@ func (h *TodoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.mu.RLock()
 	todo, exists := h.todos[id]
+	h.mu.RUnlock()
 	if !exists {
 		writeError(w, http.StatusNotFound, "Задача не найдена")
 		return
@@ -98,6 +105,7 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.mu.Lock()
 	todo := models.Todo{
 		ID:          h.nextID,
 		UserID:      req.UserID,
@@ -109,6 +117,7 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 	h.todos[h.nextID] = todo
 	h.nextID++
+	h.mu.Unlock()
 
 	log.Printf("Создана новая задача: %+v", todo)
 
@@ -151,8 +160,10 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.mu.Lock()
 	todo, exists := h.todos[id]
 	if !exists {
+		h.mu.Unlock()
 		writeError(w, http.StatusNotFound, "Задача не найдена")
 		return
 	}
@@ -169,6 +180,7 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	todo.UpdatedAt = time.Now()
 
 	h.todos[id] = todo
+	h.mu.Unlock()
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -194,6 +206,9 @@ func (h *TodoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "Неверный ID")
 		return
 	}
+
+	h.mu.Lock()
+	defer h.mu.Unlock()
 
 	if _, exists := h.todos[id]; !exists {
 		writeError(w, http.StatusNotFound, "Задача не найдена")
