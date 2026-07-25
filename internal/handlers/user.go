@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 
@@ -57,14 +56,14 @@ func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        id   path      int  true  "ID пользователя"
 // @Success      200  {object}  models.SuccessResponse{data=models.User}
-// @Failure      400  {string}  string  "Неверный ID"
-// @Failure      404  {string}  string  "Пользователь не найден"
+// @Failure      400  {object}  models.ErrorResponse
+// @Failure      404  {object}  models.ErrorResponse
 // @Router       /api/v1/users/{id} [get]
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Неверный ID", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Неверный ID")
 		return
 	}
 
@@ -73,7 +72,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	h.mu.RUnlock()
 
 	if !exists {
-		http.Error(w, "Пользователь не найден", http.StatusNotFound)
+		writeError(w, http.StatusNotFound, "Пользователь не найден")
 		return
 	}
 
@@ -93,12 +92,12 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        body  body      models.CreateUserRequest  true  "Данные пользователя"
 // @Success      201   {object}  models.SuccessResponse{data=models.User}
-// @Failure      400   {string}  string  "Невалидный запрос"
+// @Failure      400   {object}  models.ErrorResponse
 // @Router       /api/v1/users [post]
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req models.CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Невалидный запрос", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Невалидный запрос")
 		return
 	}
 
@@ -132,20 +131,20 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Param        id    path      int                       true  "ID пользователя"
 // @Param        body  body      models.UpdateUserRequest  true  "Обновляемые поля"
 // @Success      200   {object}  models.SuccessResponse{data=models.User}
-// @Failure      400   {string}  string  "Неверный ID или невалидный запрос"
-// @Failure      404   {string}  string  "Пользователь не найден"
+// @Failure      400   {object}  models.ErrorResponse
+// @Failure      404   {object}  models.ErrorResponse
 // @Router       /api/v1/users/{id} [put]
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Неверный ID", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Неверный ID")
 		return
 	}
 
 	var req models.UpdateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Невалидный запрос", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Невалидный запрос")
 		return
 	}
 
@@ -154,7 +153,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	user, exists := h.users[id]
 	if !exists {
-		http.Error(w, "Пользователь не найден", http.StatusNotFound)
+		writeError(w, http.StatusNotFound, "Пользователь не найден")
 		return
 	}
 
@@ -181,14 +180,14 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 // @Tags         users
 // @Param        id  path      int  true  "ID пользователя"
 // @Success      204
-// @Failure      400  {string}  string  "Неверный ID"
-// @Failure      404  {string}  string  "Пользователь не найден"
+// @Failure      400  {object}  models.ErrorResponse
+// @Failure      404  {object}  models.ErrorResponse
 // @Router       /api/v1/users/{id} [delete]
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Неверный ID", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Неверный ID")
 		return
 	}
 
@@ -196,7 +195,7 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	defer h.mu.Unlock()
 
 	if _, exists := h.users[id]; !exists {
-		http.Error(w, "Пользователь не найден", http.StatusNotFound)
+		writeError(w, http.StatusNotFound, "Пользователь не найден")
 		return
 	}
 

@@ -92,9 +92,9 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -139,15 +139,15 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Неверный ID",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Задача не найдена",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -202,15 +202,15 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Неверный ID или невалидный запрос",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Задача не найдена",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -235,15 +235,15 @@ const docTemplate = `{
                         "description": "No Content"
                     },
                     "400": {
-                        "description": "Неверный ID",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Задача не найдена",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -326,9 +326,9 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Невалидный запрос",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -373,15 +373,15 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Неверный ID",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -436,15 +436,15 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Неверный ID или невалидный запрос",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -469,15 +469,15 @@ const docTemplate = `{
                         "description": "No Content"
                     },
                     "400": {
-                        "description": "Неверный ID",
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -521,6 +521,17 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "maxLength": 100
+                }
+            }
+        },
+        "models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
                 }
             }
         },

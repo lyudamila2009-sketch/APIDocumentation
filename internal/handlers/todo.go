@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"api-doc-example/internal/models"
@@ -50,20 +49,20 @@ func (h *TodoHandler) ListTodos(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        id   path      int  true  "ID задачи"
 // @Success      200  {object}  models.SuccessResponse{data=models.Todo}
-// @Failure      400  {string}  string  "Неверный ID"
-// @Failure      404  {string}  string  "Задача не найдена"
+// @Failure      400  {object}  models.ErrorResponse
+// @Failure      404  {object}  models.ErrorResponse
 // @Router       /api/v1/todos/{id} [get]
 func (h *TodoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := parseID(idStr)
 	if err != nil {
-		http.Error(w, "Неверный ID", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Неверный ID")
 		return
 	}
 
 	todo, exists := h.todos[id]
 	if !exists {
-		http.Error(w, "Задача не найдена", http.StatusNotFound)
+		writeError(w, http.StatusNotFound, "Задача не найдена")
 		return
 	}
 
@@ -83,12 +82,12 @@ func (h *TodoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        body  body      models.CreateTodoRequest  true  "Данные задачи"
 // @Success      201   {object}  models.SuccessResponse{data=models.Todo}
-// @Failure      400   {string}  string  "Невалидный запрос"
+// @Failure      400   {object}  models.ErrorResponse
 // @Router       /api/v1/todos [post]
 func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	var req models.CreateTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Невалидный запрос", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Невалидный запрос")
 		return
 	}
 
@@ -123,26 +122,26 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 // @Param        id    path      int                       true  "ID задачи"
 // @Param        body  body      models.UpdateTodoRequest  true  "Обновляемые поля"
 // @Success      200   {object}  models.SuccessResponse{data=models.Todo}
-// @Failure      400   {string}  string  "Неверный ID или невалидный запрос"
-// @Failure      404   {string}  string  "Задача не найдена"
+// @Failure      400   {object}  models.ErrorResponse
+// @Failure      404   {object}  models.ErrorResponse
 // @Router       /api/v1/todos/{id} [put]
 func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := parseID(idStr)
 	if err != nil {
-		http.Error(w, "Неверный ID", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Неверный ID")
 		return
 	}
 
 	var req models.UpdateTodoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Невалидный запрос", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Невалидный запрос")
 		return
 	}
 
 	todo, exists := h.todos[id]
 	if !exists {
-		http.Error(w, "Задача не найдена", http.StatusNotFound)
+		writeError(w, http.StatusNotFound, "Задача не найдена")
 		return
 	}
 
@@ -173,19 +172,19 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 // @Tags         todos
 // @Param        id  path      int  true  "ID задачи"
 // @Success      204
-// @Failure      400  {string}  string  "Неверный ID"
-// @Failure      404  {string}  string  "Задача не найдена"
+// @Failure      400  {object}  models.ErrorResponse
+// @Failure      404  {object}  models.ErrorResponse
 // @Router       /api/v1/todos/{id} [delete]
 func (h *TodoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := parseID(idStr)
 	if err != nil {
-		http.Error(w, "Неверный ID", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "Неверный ID")
 		return
 	}
 
 	if _, exists := h.todos[id]; !exists {
-		http.Error(w, "Задача не найдена", http.StatusNotFound)
+		writeError(w, http.StatusNotFound, "Задача не найдена")
 		return
 	}
 
