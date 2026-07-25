@@ -23,9 +23,8 @@ func main() {
 
 	swaggerDir := "docs"
 
-	r.Get("/swagger", http.RedirectHandler("/swagger/index.html", http.StatusMovedPermanently).ServeHTTP)
-	r.Get("/swagger/", http.RedirectHandler("/swagger/index.html", http.StatusMovedPermanently).ServeHTTP)
-	r.Get("/swagger/index.html", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/swagger", http.RedirectHandler("/swagger/", http.StatusMovedPermanently).ServeHTTP)
+	r.Get("/swagger/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "docs/swagger.html")
 	})
 	r.Get("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
