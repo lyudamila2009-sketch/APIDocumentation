@@ -12,7 +12,7 @@ REST API для управления пользователями и задач�
 ## Структура проекта
 
 ```
-ai-assist-it/
+api-doc-example/
 ├── docs/                 # Документация API (Swagger)
 │   ├── swagger.json     # OpenAPI спецификация
 │   └── README.md        # Документация в docs/
@@ -29,12 +29,13 @@ ai-assist-it/
 └── README.md            # Документация проекта
 ```
 
+> **Примечание:** Это репозиторий `APIDocumentation` для проекта `api-doc-example`, реализующего REST API сервис **Task Management API**.
+
 ## Установка и запуск
 
 ### Требования
 
 - Go 1.22+
-- make (опционально)
 
 ### Установка зависимостей
 
@@ -49,12 +50,6 @@ go run main.go
 ```
 
 Сервер запустится на `http://localhost:8080`
-
-### Запуск через make (если доступно)
-
-```bash
-make run
-```
 
 ## Зависимости
 
@@ -73,7 +68,7 @@ go install github.com/swaggo/swag/cmd/swag@latest
 Генерация документации:
 
 ```bash
-swag init
+swag init -g main.go -o docs
 ```
 
 ## API Документация
@@ -187,82 +182,90 @@ curl -X POST http://localhost:8080/api/v1/todos \
 }
 ```
 
-## Pydantic модели (описание)
+## Модели данных
 
-> Примечание: В проекте используются Go структуры, но ниже приведено описание аналогов Pydantic моделей для понимания структуры данных.
+В проекте используются Go структуры для описания данных. Ниже приведены описания моделей для справки.
 
 ### User
 
-```python
-class User(BaseModel):
-    id: int
-    email: str
-    name: str
-    created_at: datetime
+```go
+type User struct {
+	ID        int       `json:"id"`
+	Email     string    `json:"email"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+}
 ```
 
 ### CreateUserRequest
 
-```python
-class CreateUserRequest(BaseModel):
-    email: str = Field(..., pattern=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-    name: str = Field(..., max_length=100)
+```go
+type CreateUserRequest struct {
+	Email string `json:"email" validate:"required,email"`
+	Name  string `json:"name" validate:"required,max=100"`
+}
 ```
 
 ### UpdateUserRequest
 
-```python
-class UpdateUserRequest(BaseModel):
-    email: Optional[str] = Field(None, pattern=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-    name: Optional[str] = Field(None, max_length=100)
+```go
+type UpdateUserRequest struct {
+	Email *string `json:"email" validate:"omitempty,email"`
+	Name  *string `json:"name" validate:"omitempty,max=100"`
+}
 ```
 
 ### Todo
 
-```python
-class Todo(BaseModel):
-    id: int
-    user_id: int
-    title: str
-    description: str
-    done: bool
-    created_at: datetime
-    updated_at: datetime
+```go
+type Todo struct {
+	ID          int       `json:"id"`
+	UserID      int       `json:"user_id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Done        bool      `json:"done"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
 ```
 
 ### CreateTodoRequest
 
-```python
-class CreateTodoRequest(BaseModel):
-    user_id: int
-    title: str = Field(..., max_length=200)
-    description: Optional[str] = Field(None, max_length=1000)
-    done: bool = False
+```go
+type CreateTodoRequest struct {
+	UserID      int    `json:"user_id" validate:"required"`
+	Title       string `json:"title" validate:"required,max=200"`
+	Description string `json:"description" validate:"max=1000"`
+	Done        bool   `json:"done"`
+}
 ```
 
 ### UpdateTodoRequest
 
-```python
-class UpdateTodoRequest(BaseModel):
-    title: Optional[str] = Field(None, max_length=200)
-    description: Optional[str] = Field(None, max_length=1000)
-    done: Optional[bool] = None
+```go
+type UpdateTodoRequest struct {
+	Title       *string `json:"title" validate:"omitempty,max=200"`
+	Description *string `json:"description" validate:"omitempty,max=1000"`
+	Done        *bool   `json:"done"`
+}
 ```
 
 ### ErrorResponse
 
-```python
-class ErrorResponse(BaseModel):
-    error: str
-    message: str
+```go
+type ErrorResponse struct {
+	Error   string `json:"error"`
+	Message string `json:"message"`
+}
 ```
 
 ### SuccessResponse
 
-```python
-class SuccessResponse(BaseModel):
-    success: bool
-    data: Optional[Any] = None
+```go
+type SuccessResponse struct {
+	Success bool        `json:"success"`
+	Data    interface{} `json:"data,omitempty"`
+}
 ```
 
 ## Лицензия
